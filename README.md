@@ -20,3 +20,5 @@
 
 ---
 ## 📑 PROJECT TITLE
+
+### StudyHub: A Student Productivity and Learning Management Mobile Application
