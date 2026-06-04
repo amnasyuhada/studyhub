@@ -4,6 +4,7 @@
 # 🎓 INFO 4335 — Section 01  
 ### 🌐 Mobile Application Development  
 **👨‍🏫 Instructor:** Mohd Khairul Azmi bin Hassan  
+**👥 Group:** 2
 **📌 Project Title:** *Studyhub*
 
 ---
