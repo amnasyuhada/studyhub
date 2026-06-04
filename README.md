@@ -59,6 +59,30 @@ Independent learners such as online courses users, certification programs learne
 
 ## FEATURES AND FUNCTIONALITIES
 
+| **Feature**       | **Description** |
+|-------------------|-----------------|
+| **Login / Register** | Allow users to register and login into their account. 
+UI Components: Form, TextFormField, ElevatedButton, Text, Icon |
+| **Assignment Tracker** | Enable users to manage assignments (add, edit, delete, update), track due date and view assignment completion status.   
+UI Components: ListView, Card, Text, ElevatedButton, Dismissible  |
+| **Study Timetable** | Create, organize and view the study schedule.  
+UI Components: ListView, Card, Text, ElevatedButton  |
+| **Notes Management** | Allow upload, manage and access study materials.  
+UI Components: ListView, Card, Image, ElevatedButton |
+| **Quiz Module** | Self assessment through quizzes and performance tracking. 
+UI Components: Text, Form, TextFormField, RadioListTile, DropdownButtonFormField, ElevatedButton |
+| **Study Groups** | Collaborative learning through creation of groups and announcements.  
+UI Components: Card, ElevatedButton, ListView, TextField |  
+| **Progress Dashboard** | Quick overview of assignments, quiz performances and academic or study progress. 
+UI Components: Card, ListView, Text, Icon |
+| **Notifications** | Reminders and alerts for schedule, assignments and quizzes. 
+UI Components: Card, Text, Icon, ListTile |
+| **Profile / Settings** | Edit user profile information. Manage basic account settings. Logout functionality. 
+UI Components: Text, TextFormField, ElevatedButton, IconButton, Text  |
+
+
+
+
 ## UI MOCK-UP
 
 ### 1. Login / Register Screen
