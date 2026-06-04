@@ -93,7 +93,7 @@ This screen provides a calendar-based interface for scheduling study sessions an
 
 ## ARCHITECTURE / TECHNICAL DESIGN
 
-<img width="1000" height="853" alt="image" src="https://github.com/user-attachments/assets/22741cea-fe02-4653-a2ae-50cbbb025977" />
+<img width="1000" height="600" alt="image" src="https://github.com/user-attachments/assets/22741cea-fe02-4653-a2ae-50cbbb025977" />
 
 The StudyHub application adopts a **client-server architecture** consisting of an Input Layer, Flutter Frontend Layer and Firebase Backend Services Layer. Users interact with the system by managing assignments, uploading notes and scheduling study timetables through the Flutter application.
 
