@@ -34,7 +34,7 @@
 ## UI MOCK-UP
 
 ### 1. Login / Register Screen
-<img width="300" height="900" alt="image" src="https://github.com/user-attachments/assets/8edf7470-b03f-4685-8016-805d837bc8e7" />
+<img width="450" height="650" alt="image" src="https://github.com/user-attachments/assets/8edf7470-b03f-4685-8016-805d837bc8e7" />
 
 This screen allows users to authenticate into the StudyHub system. It provides input fields for email and password, along with options for user registration and password recovery. Successful authentication grants access to the main application features.
 ### 2. Home Dashboard
