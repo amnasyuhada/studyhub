@@ -23,10 +23,39 @@
 ### StudyHub: Student Academic Management System
 
 ## INTRODUCTION
+The constant integration of digital technologies in the lives of students has begun to transform how they approach and manage their academics. In higher learning institutions, students have numerous tasks to juggle-attending classes, submitting assignments, studying for exams and collating all of their relevant study material. Keeping track of these academic duties is imperative in maintaining efficiency and academic accomplishment. Yet, a significant amount of students continue to organize and track their academics using various applications, or traditional methods. There have been several challenges with managing an academic life, such as losing track of assignments, difficulty in sorting academic materials and effective time management.
+
+Thus, this project entails the creation ofStudyHub, a mobile application for academic management that helps students keep track of and organize their studies efficiently. In this application, the students can organize assignments, keep study notes and other academic material for retrieval, set study times, and keep a general overview of their academic progress. By combining all of these core functions into one application, StudyHub can ultimately boost a students learning experience.
+
+Additionally, StudyHub uses the modern technologies in mobile applications in order to provide a simple, readily available and time-efficient platform to manage academics. The system is to encourage the use of more study habits, with the main goal of helping students get to their academic goals.
 
 ## OBJECTIVES
+The objectives of the StudyHub application:
+
+2.1 Provide an integrated academic management tool
+
+The study hub application would centralize and facilitate important academic management functions such as assignment tracking, study planning, and notes management, making them easily accessible and convenient for students.
+
+2.2 Optimize student productivity and time management
+
+This feature of the app would aid students in managing academic responsibilities by providing students with an efficient system to track assignments, monitor deadlines, and plan out study sessions thereby maintaining better organization and an optimized use of time.
+
+2.3 Aid student learning and academic performance
+
+The study hub would provide structure for a more organized study session as students would be able to organize learning resources, track their academic engagement, and encourage continuous student engagement in learning.
 
 ## TARGET USERS
+3.1 University & College Students
+
+University & college students are one of the target users. Students have many different courses, assignment, projects and examinations to deal with at the same time, with the aid of the application they can have the academic tasks and activities in an organized manner and always keep the eye on deadlines. They are helped to keep the study schedules in an efficient way.
+
+3.2 Foundation & diploma students
+
+Foundation and diploma students can learn effective study habits and organization skills as they begin to enter the high level of education with the aid of the application. The application provides a structured frame to help in planning and managing study activities.
+
+3.3 Independent learners
+
+Independent learners such as online courses users, certification programs learners or self-study students, can use the application to keep study materials in order, schedule activities and trace their progress in learning activities.
 
 ## FEATURES AND FUNCTIONALITIES
 
