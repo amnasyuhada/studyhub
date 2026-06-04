@@ -93,19 +93,19 @@ This screen provides a calendar-based interface for scheduling study sessions an
 
 ## ARCHITECTURE / TECHNICAL DESIGN
 
-<img width="1280" height="853" alt="image" src="https://github.com/user-attachments/assets/22741cea-fe02-4653-a2ae-50cbbb025977" />
+<img width="1000" height="853" alt="image" src="https://github.com/user-attachments/assets/22741cea-fe02-4653-a2ae-50cbbb025977" />
 
-The StudyHub application adopts a **client-server architecture** consisting of an Input Layer, Flutter Frontend Layer, and Firebase Backend Services Layer. Users interact with the system by managing assignments, uploading notes, and scheduling study timetables through the Flutter application.
+The StudyHub application adopts a **client-server architecture** consisting of an Input Layer, Flutter Frontend Layer and Firebase Backend Services Layer. Users interact with the system by managing assignments, uploading notes and scheduling study timetables through the Flutter application.
 
-The **Flutter Frontend** contains UI screens, local application logic, and **Provider-based state management** to manage data flow and update the user interface efficiently. The application communicates with Firebase services through a service layer to process user requests and retrieve data.
+The **Flutter Frontend** contains UI screens, local application logic and **Provider-based state management** to manage data flow and update the user interface efficiently. The application communicates with Firebase services through a service layer to process user requests and retrieve data.
 
-The **Firebase Backend Services** include Firebase Authentication for user management, Cloud Firestore for storing academic data, Firebase Storage for managing uploaded files, and Firebase Cloud Messaging for sending notifications and reminders.
+The **Firebase Backend Services** include Firebase Authentication for user management, Cloud Firestore for storing academic data, Firebase Storage for managing uploaded files and Firebase Cloud Messaging for sending notifications and reminders.
 
-The project follows a modular Flutter structure consisting of **models, screens, widgets, services, providers, and utils** folders, ensuring better code organization, maintainability, and scalability throughout the development process.
+The project follows a modular Flutter structure consisting of **models, screens, widgets, services, providers and utils** folders, ensuring better code organization, maintainability and scalability throughout the development process.
 
 ### State Management Approach
 
-StudyHub uses the **Provider** package for state management. Provider acts as an intermediary between the user interface and Firebase services, allowing data changes to be managed efficiently and reflected automatically across the application. This approach promotes separation of concerns, improves code maintainability, and is well-suited for medium-scale Flutter applications developed in a team environment.
+StudyHub uses the **Provider** package for state management. Provider acts as an intermediary between the user interface and Firebase services, allowing data changes to be managed efficiently and reflected automatically across the application. This approach promotes separation of concerns, improves code maintainability and is well-suited for medium-scale Flutter applications developed in a team environment.
 
 ## DATA MODEL
 
