@@ -32,28 +32,28 @@ Additionally, StudyHub uses the modern technologies in mobile applications in or
 ## OBJECTIVES
 The objectives of the StudyHub application:
 
-2.1 Provide an integrated academic management tool
+**2.1 Provide an integrated academic management tool**
 
 The study hub application would centralize and facilitate important academic management functions such as assignment tracking, study planning, and notes management, making them easily accessible and convenient for students.
 
-2.2 Optimize student productivity and time management
+**2.2 Optimize student productivity and time management**
 
 This feature of the app would aid students in managing academic responsibilities by providing students with an efficient system to track assignments, monitor deadlines, and plan out study sessions thereby maintaining better organization and an optimized use of time.
 
-2.3 Aid student learning and academic performance
+**2.3 Aid student learning and academic performance**
 
 The study hub would provide structure for a more organized study session as students would be able to organize learning resources, track their academic engagement, and encourage continuous student engagement in learning.
 
 ## TARGET USERS
-3.1 University & College Students
+**3.1 University & College Students**
 
 University & college students are one of the target users. Students have many different courses, assignment, projects and examinations to deal with at the same time, with the aid of the application they can have the academic tasks and activities in an organized manner and always keep the eye on deadlines. They are helped to keep the study schedules in an efficient way.
 
-3.2 Foundation & diploma students
+**3.2 Foundation & diploma students**
 
 Foundation and diploma students can learn effective study habits and organization skills as they begin to enter the high level of education with the aid of the application. The application provides a structured frame to help in planning and managing study activities.
 
-3.3 Independent learners
+**3.3 Independent learners**
 
 Independent learners such as online courses users, certification programs learners or self-study students, can use the application to keep study materials in order, schedule activities and trace their progress in learning activities.
 
@@ -92,6 +92,20 @@ The Notes Management screen allows users to upload, organize and access study ma
 This screen provides a calendar-based interface for scheduling study sessions and academic activities. Users can view planned tasks by date, add new schedules and manage their study routine effectively to improve time management and consistency.
 
 ## ARCHITECTURE / TECHNICAL DESIGN
+
+<img width="1280" height="853" alt="image" src="https://github.com/user-attachments/assets/22741cea-fe02-4653-a2ae-50cbbb025977" />
+
+The StudyHub application adopts a **client-server architecture** consisting of an Input Layer, Flutter Frontend Layer, and Firebase Backend Services Layer. Users interact with the system by managing assignments, uploading notes, and scheduling study timetables through the Flutter application.
+
+The **Flutter Frontend** contains UI screens, local application logic, and **Provider-based state management** to manage data flow and update the user interface efficiently. The application communicates with Firebase services through a service layer to process user requests and retrieve data.
+
+The **Firebase Backend Services** include Firebase Authentication for user management, Cloud Firestore for storing academic data, Firebase Storage for managing uploaded files, and Firebase Cloud Messaging for sending notifications and reminders.
+
+The project follows a modular Flutter structure consisting of **models, screens, widgets, services, providers, and utils** folders, ensuring better code organization, maintainability, and scalability throughout the development process.
+
+### State Management Approach
+
+StudyHub uses the **Provider** package for state management. Provider acts as an intermediary between the user interface and Firebase services, allowing data changes to be managed efficiently and reflected automatically across the application. This approach promotes separation of concerns, improves code maintainability, and is well-suited for medium-scale Flutter applications developed in a team environment.
 
 ## DATA MODEL
 
