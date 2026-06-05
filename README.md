@@ -153,5 +153,6 @@ After completing any task, users can return to the dashboard for easy navigation
 ## REFERENCES
 + GeeksForGeeks (2025, July 23rd), Data Modeling Basics for Firestore, https://www.geeksforgeeks.org/firebase/data-modeling-basics-for-cloud-firestore/
 + Nikhil Garg et. al. (2024, April). Flutter Technology with Firebase Database. _International Journal of Research Publication and Reviews, Vol 5, no 4, pp 2368-2371_
++ Link for UI mock-up https://stitch.withgoogle.com/projects/3053450885827489382 
 
 
