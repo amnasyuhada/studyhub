@@ -138,6 +138,7 @@ This structure improves data organization, scalability, and efficient retrieval,
 
 ## FLOWCHART DIAGRAM
 <img width="641" height="508" alt="StudyHub-DataModel drawio" src="https://github.com/user-attachments/assets/e7eccdf0-faca-4f10-9751-d88554854372" />
+
 The flowchart represents the overall user interaction and navigation flow within the StudyHub application.
 
 The process begins with user authentication, where users either register a new account or log in to access the system. After successful login, users are directed to the Home Dashboard, which acts as the central hub of the application.
