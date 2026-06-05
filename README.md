@@ -123,9 +123,33 @@ The project follows a modular Flutter structure consisting of **models, screens,
 StudyHub uses the **Provider** package for state management. Provider acts as an intermediary between the user interface and Firebase services, allowing data changes to be managed efficiently and reflected automatically across the application. This approach promotes separation of concerns, improves code maintainability and is well-suited for medium-scale Flutter applications developed in a team environment.
 
 ## DATA MODEL
+<img width="906" height="551" alt="StudyHub-FlowChart drawio" src="https://github.com/user-attachments/assets/46f4deab-18d7-4d20-9b87-a8169d21e440" />
+The data model for StudyHub is designed using a Firestore collection–document structure, where data is organized based on ownership and functionality.
 
-## FLOWCHART / SEQUENCE DIAGRAM
+The main collections are Users, Quizzes, and Study Groups.
+
+Each user document stores personal academic data such as assignments, study schedules, notes, notifications, and quiz results in subcollections. This is because these data are user-specific and private, meaning each student only accesses their own records.
+
+The quizzes collection stores quiz information such as questions and categories, which are shared resources accessible by all users.
+
+The studyGroups collection manages collaborative learning features. Each group contains members and announcements, where announcements are stored as a subcollection because they belong specifically to a group context.
+
+This structure improves data organization, scalability, and efficient retrieval, especially for user-centered features like dashboards and progress tracking.
+
+## FLOWCHART DIAGRAM
+<img width="641" height="508" alt="StudyHub-DataModel drawio" src="https://github.com/user-attachments/assets/e7eccdf0-faca-4f10-9751-d88554854372" />
+The flowchart represents the overall user interaction and navigation flow within the StudyHub application.
+
+The process begins with user authentication, where users either register a new account or log in to access the system. After successful login, users are directed to the Home Dashboard, which acts as the central hub of the application.
+
+From the dashboard, users can navigate to different modules including Assignment Tracker, Study Timetable, Notes Management, Quiz Module, Study Groups, and Profile Settings.
+
+Each module allows users to perform specific tasks such as adding and managing assignments, scheduling study sessions, accessing learning materials, participating in quizzes, and collaborating in study groups.
+
+After completing any task, users can return to the dashboard for easy navigation across other features. This flow ensures a simple, centralized, and user-friendly experience, allowing students to manage all academic activities within one integrated system.
 
 ## REFERENCES
++ GeeksForGeeks (2025, July 23rd), Data Modeling Basics for Firestore, https://www.geeksforgeeks.org/firebase/data-modeling-basics-for-cloud-firestore/
++ Nikhil Garg et. al. (2024, April). Flutter Technology with Firebase Database. _International Journal of Research Publication and Reviews, Vol 5, no 4, pp 2368-2371_
 
 
