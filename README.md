@@ -124,6 +124,7 @@ StudyHub uses the **Provider** package for state management. Provider acts as an
 
 ## DATA MODEL
 <img width="906" height="551" alt="StudyHub-FlowChart drawio" src="https://github.com/user-attachments/assets/46f4deab-18d7-4d20-9b87-a8169d21e440" />
+
 The data model for StudyHub is designed using a Firestore collection–document structure, where data is organized based on ownership and functionality.
 
 The main collections are Users, Quizzes, and Study Groups.
