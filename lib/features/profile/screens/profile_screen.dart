@@ -62,6 +62,65 @@ class ProfileScreen extends ConsumerWidget {
                       horizontal: 32, vertical: 12),
                 ),
               ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () => context.push('/study-goals'),
+                icon: const Icon(Icons.flag),
+                label: const Text('Study Goals'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4F46E5),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32, vertical: 12),
+                ),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () => context.push('/quiz'),
+                icon: const Icon(Icons.quiz),
+                label: const Text('Quizzes'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4F46E5),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  )
+                  ),
+                  
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    onPressed: () => context.push('/quiz-history'),
+                    icon: const Icon(Icons.history),
+                    label: const Text('Quiz History'),
+                    style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    ),
+                    ),
+
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: () => context.push('/analytics'),
+                      icon: const Icon(Icons.analytics),
+                      label: const Text('Progress Analytics'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4F46E5),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                        ),
+                        ),
+                        
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () => context.push('/achievements'),
+                          icon: const Icon(Icons.emoji_events),
+                          label: const Text('Achievements'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4F46E5),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                            ),
+                            ),
             ],
           ),
         ),

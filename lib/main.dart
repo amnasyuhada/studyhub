@@ -20,6 +20,13 @@ class MyApp extends ConsumerWidget {
       title: 'StudyHub',
       debugShowCheckedModeBanner: false,
       routerConfig: router,
+      scrollBehavior: const ScrollBehavior().copyWith(overscroll: false),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(0xFF4F46E5),
+        ),
+        useMaterial3: true,
+      ),
     );
   }
 }
