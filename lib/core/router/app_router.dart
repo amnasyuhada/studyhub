@@ -16,6 +16,7 @@ import '../../features/quiz/screens/quiz_add_questions_screen.dart';
 import '../../features/analytics/screens/analytics_dashboard_screen.dart';
 import '../../features/analytics/screens/achievement_screen.dart';
 import '../../features/quiz/screens/quiz_detail_screen.dart';
+import '../../features/dashboard/presentation/dashboard_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -76,6 +77,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
 
       GoRoute(path: '/quiz-history', builder: (ctx, state) => const QuizHistoryScreen()),
-    ],
-  );
+
+      GoRoute(
+        path: '/dashboard',
+        builder: (ctx, state) => const DashboardScreen(),
+      ),
+      ],
+    );
 });
