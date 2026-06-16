@@ -147,6 +147,17 @@ class ProfileScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   ),
                 ),
+
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/dashboard'),
+                  icon: const Icon(Icons.folder_outlined),
+                  label: const Text('Dashboard'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  ),
+                ),
                         
             ],
           ),

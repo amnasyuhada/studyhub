@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/theme/widgets/accent_card.dart';
 import '../../../shared/theme/widgets/main_shell.dart';
@@ -51,12 +52,119 @@ class DashboardScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildStudyHoursCard(repo, today),
             const SizedBox(height: 16),
+            _buildQuickQuizSection(context), // ✅ NEW: Quick Quiz Section
+            const SizedBox(height: 16),
             _buildWeeklyProgress(repo, today),
             const SizedBox(height: 20),
             const Text('Today\'s Sessions',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 12),
             _buildTodaySessions(repo, today, context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ✅ NEW: Quick Quiz Section
+  Widget _buildQuickQuizSection(BuildContext context) {
+    return AccentCard(
+      accentColor: AppColors.primary,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                'Quick Quiz',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              Text(
+                'Test Your Knowledge',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildQuizButton(
+                  context,
+                  icon: Icons.quiz_outlined,
+                  label: 'Take Quiz',
+                  color: AppColors.primary,
+                  onTap: () => context.go('/quiz'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildQuizButton(
+                  context,
+                  icon: Icons.history_outlined,
+                  label: 'History',
+                  color: AppColors.warning,
+                  onTap: () => context.go('/quiz-history'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildQuizButton(
+                  context,
+                  icon: Icons.emoji_events_outlined,
+                  label: 'Achievements',
+                  color: AppColors.success,
+                  onTap: () => context.go('/achievements'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuizButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: color.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
       ),
