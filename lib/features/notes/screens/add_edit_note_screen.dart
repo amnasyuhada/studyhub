@@ -141,7 +141,6 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Handle bar
                   Center(
                     child: Container(
                       width: 40,
@@ -164,7 +163,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                           fontSize: 13, color: Color(0xFF6B7280))),
                   const SizedBox(height: 20),
 
-                  // Subject name field
+                  // Subject name input field
                   TextField(
                     controller: nameCtrl,
                     autofocus: true,
@@ -193,7 +192,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Color picker label
+                  // Color label
                   const Text('Pick a colour',
                       style: TextStyle(
                           fontSize: 13,
@@ -201,7 +200,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                           color: Color(0xFF374151))),
                   const SizedBox(height: 12),
 
-                  // Color grid
+                  // Color 
                   Wrap(
                     spacing: 10,
                     runSpacing: 10,
@@ -245,7 +244,6 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                   // Preview + Add button
                   Row(
                     children: [
-                      // Preview chip
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 8),
@@ -293,13 +291,12 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                             );
                             return;
                           }
-                          // Add to provider
+                          
                           final current =
                               ref.read(userSubjectsProvider);
                           ref
                               .read(userSubjectsProvider.notifier)
                               .state = {...current, name: pickedColor};
-                          // Auto-select the new subject
                           setState(() {
                             _subject = name;
                             _subjectColor = pickedColor;
@@ -330,7 +327,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
     );
   }
 
-  // Manage (delete) existing subjects
+  // Manage  existing subjects
   void _showManageSubjectsSheet() {
     showModalBottomSheet(
       context: context,
@@ -439,7 +436,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
   Widget build(BuildContext context) {
     final subjects = ref.watch(userSubjectsProvider);
 
-    // Make sure subject is still valid if subjects changed
+    // Make sure subject is still valid even if subjects changed
     if (!subjects.containsKey(_subject)) {
       _subject = subjects.keys.first;
       _subjectColor = subjects.values.first;
@@ -532,7 +529,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
         ),
         const SizedBox(height: 8),
 
-        // Scrollable subject chips
+        // subject chips
         SizedBox(
           height: 40,
           child: ListView(
@@ -576,7 +573,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                 );
               }),
 
-              // + Add new subject button
+              // Add new subject button
               GestureDetector(
                 onTap: _showAddSubjectSheet,
                 child: Container(
