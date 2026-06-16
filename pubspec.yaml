@@ -21,6 +21,8 @@ dependencies:
   image_picker: ^1.1.0
   cached_network_image: ^3.3.0
   fl_chart: ^0.69.0
+  file_picker: ^10.2.0
+  syncfusion_flutter_pdfviewer: ^31.1.17
 
   # Your features
   table_calendar: ^3.1.2

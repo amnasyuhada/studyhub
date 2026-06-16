@@ -59,7 +59,7 @@ class ProfileScreen extends ConsumerWidget {
                 label: const Text('Edit Profile'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 32, vertical: 12),
+                  horizontal: 32, vertical: 12),
                 ),
               ),
               const SizedBox(height: 12),
@@ -71,7 +71,7 @@ class ProfileScreen extends ConsumerWidget {
                   backgroundColor: const Color(0xFF4F46E5),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 32, vertical: 12),
+                  horizontal: 32, vertical: 12),
                 ),
               ),
               const SizedBox(height: 12),
@@ -80,47 +80,74 @@ class ProfileScreen extends ConsumerWidget {
                 icon: const Icon(Icons.quiz),
                 label: const Text('Quizzes'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4F46E5),
+                backgroundColor: const Color(0xFF4F46E5),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  )
-                  ),
+                )
+              ),
                   
-                  const SizedBox(height: 12),
-                  ElevatedButton.icon(
-                    onPressed: () => context.push('/quiz-history'),
-                    icon: const Icon(Icons.history),
-                    label: const Text('Quiz History'),
-                    style: ElevatedButton.styleFrom(
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/quiz-history'),
+                  icon: const Icon(Icons.history),
+                  label: const Text('Quiz History'),
+                  style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4F46E5),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                    ),
-                    ),
+                  ),
+                ),
 
-                    const SizedBox(height: 12),
-                    ElevatedButton.icon(
-                      onPressed: () => context.push('/analytics'),
-                      icon: const Icon(Icons.analytics),
-                      label: const Text('Progress Analytics'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4F46E5),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        ),
-                        ),
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/analytics'),
+                  icon: const Icon(Icons.analytics),
+                  label: const Text('Progress Analytics'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                   ),
+                ),
                         
-                        const SizedBox(height: 12),
-                        ElevatedButton.icon(
-                          onPressed: () => context.push('/achievements'),
-                          icon: const Icon(Icons.emoji_events),
-                          label: const Text('Achievements'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4F46E5),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                            ),
-                            ),
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/achievements'),
+                  icon: const Icon(Icons.emoji_events),
+                  label: const Text('Achievements'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/notes'),
+                  icon: const Icon(Icons.note_alt_outlined),
+                  label: const Text('Notes'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/resources'),
+                  icon: const Icon(Icons.folder_outlined),
+                  label: const Text('Resources'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  ),
+                ),
+                        
             ],
           ),
         ),
