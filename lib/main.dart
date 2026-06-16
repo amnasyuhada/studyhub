@@ -9,11 +9,21 @@ import 'features/notifications/services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    debugPrint("Firebase initialized successfully");
+  } catch (e) {
+    debugPrint("Failed to initialize Firebase: $e");
+  }
 
-  await NotificationService.instance.init();
+  try {
+    await NotificationService.instance.init();
+    debugPrint("NotificationService initialized successfully");
+  } catch (e) {
+    debugPrint("Failed to initialize NotificationService: $e");
+  }
 
   runApp(const ProviderScope(child: MyApp()));
 }
