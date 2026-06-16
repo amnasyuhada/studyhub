@@ -11,7 +11,6 @@ class NotesRepository {
   CollectionReference get _notesRef =>
       _firestore.collection('users').doc(_userId).collection('notes');
 
-  // ─── Stream all notes ────────────────────────────────────────────────────
   Stream<List<NoteModel>> streamNotes() {
     return _notesRef
         .orderBy('updatedAt', descending: true)
@@ -19,7 +18,7 @@ class NotesRepository {
         .map((snap) => snap.docs.map(NoteModel.fromFirestore).toList());
   }
 
-  // ─── Create ──────────────────────────────────────────────────────────────
+  // Create note
   Future<NoteModel> createNote({
     required String title,
     required String content,
@@ -43,7 +42,7 @@ class NotesRepository {
     return NoteModel.fromFirestore(doc);
   }
 
-  // ─── Update ──────────────────────────────────────────────────────────────
+  // Update note
   Future<void> updateNote(NoteModel note) async {
     await _notesRef.doc(note.id).update({
       ...note.toMap(),
@@ -51,12 +50,12 @@ class NotesRepository {
     });
   }
 
-  // ─── Delete ──────────────────────────────────────────────────────────────
+  //  Delete note
   Future<void> deleteNote(String noteId) async {
     await _notesRef.doc(noteId).delete();
   }
 
-  // ─── Bookmark toggle ─────────────────────────────────────────────────────
+  // Bookmark note
   Future<void> toggleBookmark(String noteId, bool current) async {
     await _notesRef.doc(noteId).update({'isBookmarked': !current});
   }
