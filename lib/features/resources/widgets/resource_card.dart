@@ -18,7 +18,6 @@ class ResourceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // In the build method, replace the onTap:
       onTap: () {
         if (resource.fileType == 'pdf') {
           Navigator.push(
@@ -52,7 +51,6 @@ class ResourceCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Dynamic icon based on file type
             Container(
               width: 48,
               height: 48,
@@ -90,7 +88,6 @@ class ResourceCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      // File type badge
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
