@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class RichTextEditor extends StatefulWidget {
   final TextEditingController controller;
