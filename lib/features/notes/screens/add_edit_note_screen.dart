@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/note_model.dart';
 import '../providers/notes_provider.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 // Default subjects 
 const _defaultSubjects = {
-  'Computer Science': '#4F46E5',
-  'Information Technology': '#7C3AED',
   'Mathematics': '#2563EB',
-  'Physics': '#059669',
-  'Engineering': '#D97706',
-  'Arts': '#DB2777',
   'Language': '#DC2626',
   'Business': '#0891B2',
   'Other': '#6B7280',
@@ -51,8 +47,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
   void initState() {
     super.initState();
     _titleCtrl = TextEditingController(text: widget.note?.title ?? '');
-    _contentCtrl =
-        TextEditingController(text: widget.note?.content ?? '');
+    _contentCtrl = TextEditingController(text: widget.note?.content ?? '');
     _tags = List.from(widget.note?.tags ?? []);
 
     final subjects = ref.read(userSubjectsProvider);
@@ -117,6 +112,91 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
     _tagCtrl.clear();
   }
 
+  // ─── FORMATTING METHODS ──────────────────────────────────────────────────────
+  
+  /// Insert formatting like **bold** or *italic* around selected text
+  void _insertFormatting(String prefix, String suffix) {
+    final text = _contentCtrl.text;
+    final selection = _contentCtrl.selection;
+    final start = selection.start.clamp(0, text.length);
+    final end = selection.end.clamp(0, text.length);
+
+    if (selection.isValid && start != end) {
+      final selectedText = text.substring(start, end);
+      final newText = text.replaceRange(start, end, '$prefix$selectedText$suffix');
+      _contentCtrl.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection(
+          baseOffset: start + prefix.length,
+          extentOffset: end + prefix.length,
+        ),
+      );
+    } else {
+      final cursor = start < 0 ? 0 : start;
+      final newText = text.replaceRange(cursor, cursor, '$prefix$suffix');
+      _contentCtrl.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(offset: cursor + prefix.length),
+      );
+    }
+    setState(() {});
+    // ❌ The FocusScope line that was here is now gone
+  }
+
+  /// Insert a bullet point at the start of the current line
+  void _insertBullet() {
+    final text = _contentCtrl.text;
+    final selection = _contentCtrl.selection;
+    final start = selection.start;
+    
+    // Find the start of the current line
+    int lineStart = start;
+    while (lineStart > 0 && text[lineStart - 1] != '\n') {
+      lineStart--;
+    }
+    
+    final newText = text.replaceRange(lineStart, lineStart, '- ');
+    _contentCtrl.text = newText;
+    _contentCtrl.selection = TextSelection(
+      baseOffset: start + 2,
+      extentOffset: start + 2,
+    );
+    setState(() {});
+  }
+
+  /// Insert a numbered list item with auto-incrementing numbers
+  void _insertNumbered() {
+    final text = _contentCtrl.text;
+    final selection = _contentCtrl.selection;
+    final start = selection.start;
+    
+    // Find the start of the current line
+    int lineStart = start;
+    while (lineStart > 0 && text[lineStart - 1] != '\n') {
+      lineStart--;
+    }
+    
+    // Count previous numbered items
+    final lines = text.substring(0, lineStart).split('\n');
+    int number = 1;
+    for (int i = lines.length - 1; i >= 0; i--) {
+      final match = RegExp(r'^(\d+)\. ').firstMatch(lines[i]);
+      if (match != null) {
+        number = int.parse(match.group(1)!) + 1;
+        break;
+      }
+    }
+    
+    final newText = text.replaceRange(lineStart, lineStart, '$number. ');
+    _contentCtrl.text = newText;
+    _contentCtrl.selection = TextSelection(
+      baseOffset: start + ('$number. '.length),
+      extentOffset: start + ('$number. '.length),
+    );
+    setState(() {});
+  }
+
+  // ─── SHOW ADD SUBJECT SHEET ──────────────────────────────────────────────
   void _showAddSubjectSheet() {
     final nameCtrl = TextEditingController();
     String pickedColor = _colorPalette[0];
@@ -162,8 +242,6 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                       style: TextStyle(
                           fontSize: 13, color: Color(0xFF6B7280))),
                   const SizedBox(height: 20),
-
-                  // Subject name input field
                   TextField(
                     controller: nameCtrl,
                     autofocus: true,
@@ -191,16 +269,12 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
-                  // Color label
                   const Text('Pick a colour',
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF374151))),
                   const SizedBox(height: 12),
-
-                  // Color 
                   Wrap(
                     spacing: 10,
                     runSpacing: 10,
@@ -240,8 +314,6 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                     }).toList(),
                   ),
                   const SizedBox(height: 24),
-
-                  // Preview + Add button
                   Row(
                     children: [
                       Container(
@@ -291,7 +363,6 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                             );
                             return;
                           }
-                          
                           final current =
                               ref.read(userSubjectsProvider);
                           ref
@@ -309,10 +380,10 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                              horizontal: 16, vertical: 12),
                           elevation: 0,
                         ),
-                        child: const Text('Add Subject',
+                        child: const Text('Add',
                             style:
                                 TextStyle(fontWeight: FontWeight.w600)),
                       ),
@@ -327,7 +398,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
     );
   }
 
-  // Manage  existing subjects
+  // ─── MANAGE SUBJECTS ──────────────────────────────────────────────────────
   void _showManageSubjectsSheet() {
     showModalBottomSheet(
       context: context,
@@ -432,11 +503,11 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
     );
   }
 
+  // ─── BUILD METHODS ──────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     final subjects = ref.watch(userSubjectsProvider);
 
-    // Make sure subject is still valid even if subjects changed
     if (!subjects.containsKey(_subject)) {
       _subject = subjects.keys.first;
       _subjectColor = subjects.values.first;
@@ -479,8 +550,7 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                       child: CircularProgressIndicator(
                           strokeWidth: 2, color: Colors.white))
                   : const Text('Save',
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600)),
+                      style: TextStyle(fontWeight: FontWeight.w600)),
             ),
           ),
         ],
@@ -505,6 +575,13 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
   }
 
   Widget _buildSubjectSelector(Map<String, String> subjects) {
+    final sortedEntries = subjects.entries.toList()
+      ..sort((a, b) {
+        if (a.key == 'Other') return 1;
+        if (b.key == 'Other') return -1;
+        return a.key.compareTo(b.key);
+      });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -516,7 +593,6 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF374151))),
             const Spacer(),
-            // Manage button
             GestureDetector(
               onTap: _showManageSubjectsSheet,
               child: const Text('Manage',
@@ -528,81 +604,66 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
           ],
         ),
         const SizedBox(height: 8),
-
-        // subject chips
-        SizedBox(
-          height: 40,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              ...subjects.entries.map((entry) {
-                final color = Color(
-                    int.parse(entry.value.replaceFirst('#', '0xFF')));
-                final isSelected = _subject == entry.key;
-                return GestureDetector(
-                  onTap: () => setState(() {
-                    _subject = entry.key;
-                    _subjectColor = entry.value;
-                  }),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? color
-                          : color.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected
-                            ? color
-                            : color.withOpacity(0.3),
-                      ),
-                    ),
-                    child: Text(
-                      entry.key,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: isSelected
-                              ? Colors.white
-                              : color),
-                    ),
-                  ),
-                );
-              }),
-
-              // Add new subject button
-              GestureDetector(
-                onTap: _showAddSubjectSheet,
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ...sortedEntries.map((entry) {
+              final color = Color(
+                  int.parse(entry.value.replaceFirst('#', '0xFF')));
+              final isSelected = _subject == entry.key;
+              return GestureDetector(
+                onTap: () => setState(() {
+                  _subject = entry.key;
+                  _subjectColor = entry.value;
+                }),
                 child: Container(
-                  margin: const EdgeInsets.only(left: 4),
                   padding: const EdgeInsets.symmetric(
                       horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isSelected ? color : color.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                        color: const Color(0xFFE5E7EB),
-                        style: BorderStyle.solid),
+                      color: isSelected ? color : color.withOpacity(0.3),
+                    ),
                   ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.add,
-                          size: 14, color: Color(0xFF6B7280)),
-                      SizedBox(width: 4),
-                      Text('Add new',
-                          style: TextStyle(
-                              fontSize: 13,
-                              color: Color(0xFF6B7280),
-                              fontWeight: FontWeight.w500)),
-                    ],
+                  child: Text(
+                    entry.key,
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected ? Colors.white : color),
                   ),
                 ),
+              );
+            }),
+            GestureDetector(
+              onTap: _showAddSubjectSheet,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                      color: const Color(0xFFE5E7EB),
+                      style: BorderStyle.solid),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add, size: 14, color: Color(0xFF6B7280)),
+                    SizedBox(width: 4),
+                    Text('Add new',
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF6B7280),
+                            fontWeight: FontWeight.w500)),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
@@ -638,25 +699,154 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Content',
-            style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF374151))),
+        // ── Header row ──────────────────────────────────────────────────────
+        Row(
+          children: [
+            const Text('Content',
+                style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF374151))),
+            const Spacer(),
+            Text(
+              'Markdown supported',
+              style: TextStyle(
+                fontSize: 10,
+                color: Colors.grey.shade400,
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 8),
+
+        // ── Formatting toolbar ───────────────────────────────────────────────
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Row(
+            children: [
+              _FormatButton(
+                icon: Icons.format_bold,
+                onTap: () => _insertFormatting('**', '**'),
+                tooltip: 'Bold (**text**)',
+              ),
+              _FormatButton(
+                icon: Icons.format_italic,
+                onTap: () => _insertFormatting('*', '*'),
+                tooltip: 'Italic (*text*)',
+              ),
+              const SizedBox(width: 4),
+              Container(width: 1, height: 20, color: Colors.grey.shade300),
+              const SizedBox(width: 4),
+              _FormatButton(
+                icon: Icons.format_list_bulleted,
+                onTap: () => _insertBullet(),
+                tooltip: 'Bullet list (- )',
+              ),
+              _FormatButton(
+                icon: Icons.format_list_numbered,
+                onTap: () => _insertNumbered(),
+                tooltip: 'Numbered list (1. )',
+              ),
+              const SizedBox(width: 4),
+              Container(width: 1, height: 20, color: Colors.grey.shade300),
+              const SizedBox(width: 4),
+              _FormatButton(
+                icon: Icons.code,
+                onTap: () => _insertFormatting('`', '`'),
+                tooltip: 'Code (`code`)',
+              ),
+              _FormatButton(
+                icon: Icons.format_quote,
+                onTap: () => _insertFormatting('> ', ''),
+                tooltip: 'Quote (> )',
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // ── Text editor ──────────────────────────────────────────────────────
         TextFormField(
           controller: _contentCtrl,
-          maxLines: 12,
+          maxLines: 8,
           style: const TextStyle(
-              fontSize: 14, color: Color(0xFF374151), height: 1.7),
-          decoration:
-              _inputDecoration('Write your notes here...').copyWith(
+            fontSize: 14,
+            color: Color(0xFF374151),
+            height: 1.7,
+          ),
+          decoration: _inputDecoration('Write your notes here...').copyWith(
             alignLabelWithHint: true,
           ),
           validator: (v) => (v == null || v.trim().isEmpty)
               ? 'Please enter some content'
               : null,
+          onChanged: (_) => setState(() {}), // triggers live preview rebuild
         ),
+        const SizedBox(height: 12),
+
+        // ── Live preview (appears automatically as you type) ─────────────────
+        if (_contentCtrl.text.isNotEmpty)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 3,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4F46E5),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Preview',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade500,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                constraints: const BoxConstraints(minHeight: 60),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                ),
+                child: MarkdownBody(
+                  data: _contentCtrl.text,
+                  styleSheet:
+                      MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                    p: const TextStyle(
+                        fontSize: 14, color: Color(0xFF374151), height: 1.7),
+                    code: const TextStyle(
+                      fontSize: 13,
+                      backgroundColor: Color(0xFFF3F4F6),
+                      color: Color(0xFF4F46E5),
+                    ),
+                    blockquote: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF6B7280),
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
@@ -750,6 +940,34 @@ class _AddEditNoteScreenState extends ConsumerState<AddEditNoteScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide:
               const BorderSide(color: Colors.red, width: 1.5)),
+    );
+  }
+}
+
+// ─── HELPER WIDGET ────────────────────────────────────────────────────────────
+
+class _FormatButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final String? tooltip;
+
+  const _FormatButton({
+    required this.icon,
+    required this.onTap,
+    this.tooltip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip ?? '',
+      child: IconButton(
+        icon: Icon(icon, size: 18, color: Colors.grey.shade700),
+        onPressed: onTap,
+        padding: const EdgeInsets.all(4),
+        constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+        splashRadius: 16,
+      ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/note_model.dart';
 import '../providers/notes_provider.dart';
 import 'add_edit_note_screen.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class NoteDetailScreen extends ConsumerWidget {
   final NoteModel note;
@@ -116,12 +117,24 @@ class NoteDetailScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: const Color(0xFFE5E7EB)),
               ),
-              child: Text(
-                note.content,
-                style: const TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF374151),
-                    height: 1.8),
+              child: MarkdownBody(
+                data: note.content,
+                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                  p: const TextStyle(
+                      fontSize: 15, color: Color(0xFF374151), height: 1.8),
+                  strong: const TextStyle(
+                      fontSize: 15, color: Color(0xFF111827), fontWeight: FontWeight.w700),
+                  em: const TextStyle(
+                      fontSize: 15, color: Color(0xFF374151), fontStyle: FontStyle.italic),
+                  code: const TextStyle(
+                      fontSize: 13,
+                      backgroundColor: Color(0xFFF3F4F6),
+                      color: Color(0xFF4F46E5)),
+                  blockquote: const TextStyle(
+                      fontSize: 15, color: Color(0xFF6B7280), fontStyle: FontStyle.italic),
+                  listBullet: const TextStyle(
+                      fontSize: 15, color: Color(0xFF374151)),
+                ),
               ),
             ),
             const SizedBox(height: 20),

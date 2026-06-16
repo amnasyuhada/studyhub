@@ -6,7 +6,6 @@ import '../models/resource_model.dart';
 import '../widgets/resource_card.dart';
 import 'pdf_viewer_screen.dart';
 import 'image_viewer_screen.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ResourcesScreen extends ConsumerStatefulWidget {
   const ResourcesScreen({super.key});
@@ -32,7 +31,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     final resourcesAsync = ref.watch(resourcesStreamProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F7FF),
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -40,13 +39,14 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
           'Resource Library',
           style: TextStyle(
             color: Color(0xFF111827),
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
           ),
         ),
+        centerTitle: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.help_outline, color: Color(0xFF9CA3AF)),
+            icon: const Icon(Icons.help_outline, color: Color(0xFF6B7280)),
             onPressed: () => _showInfoDialog(),
           ),
         ],
@@ -62,11 +62,11 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
                     : resources.where((r) => r.subject == _selectedSubject).toList();
                 
                 if (filtered.isEmpty) {
-                  return _buildEmptyState();
+                  return _buildEmptyState(_selectedSubject != null);
                 }
                 
                 return ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
                   itemCount: filtered.length,
                   itemBuilder: (context, index) {
                     final resource = filtered[index];
@@ -94,33 +94,50 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showUploadOptions,
         backgroundColor: const Color(0xFF4F46E5),
-        child: const Icon(Icons.add, color: Colors.white),
+        elevation: 4,
+        child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
     );
   }
 
   Widget _buildSubjectFilter() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-      child: Row(
-        children: [
-          _FilterChip(
-            label: 'All',
-            isSelected: _selectedSubject == null,
-            onTap: () => setState(() => _selectedSubject = null),
-          ),
-          ..._subjects.keys.map((subject) => _FilterChip(
-            label: subject,
-            isSelected: _selectedSubject == subject,
-            onTap: () => setState(() => _selectedSubject = subject),
-          )),
-        ],
+    // Sort subjects with "Other" at the end
+    final sortedSubjects = _subjects.keys.toList()
+      ..sort((a, b) {
+        if (a == 'Other') return 1;
+        if (b == 'Other') return -1;
+        return a.compareTo(b);
+      });
+
+    return Container(
+      height: 56,
+      color: Colors.white,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            _FilterChip(
+              label: 'All',
+              isSelected: _selectedSubject == null,
+              onTap: () => setState(() => _selectedSubject = null),
+            ),
+            const SizedBox(width: 8),
+            ...sortedSubjects.map((subject) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: _FilterChip(
+                label: subject,
+                isSelected: _selectedSubject == subject,
+                onTap: () => setState(() => _selectedSubject = subject),
+              ),
+            )),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(bool hasFilter) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -128,33 +145,39 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 80,
-              height: 80,
+              width: 100,
+              height: 100,
               decoration: BoxDecoration(
-                color: const Color(0xFFEEF2FF),
-                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  colors: [const Color(0xFF4F46E5).withOpacity(0.1), const Color(0xFF7C3AED).withOpacity(0.05)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(30),
               ),
-              child: const Icon(
-                Icons.folder_open,
-                size: 40,
-                color: Color(0xFF4F46E5),
+              child: Icon(
+                hasFilter ? Icons.search_off : Icons.folder_open,
+                size: 44,
+                color: hasFilter ? Colors.grey.shade400 : const Color(0xFF4F46E5),
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'No resources yet',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+            const SizedBox(height: 24),
+            Text(
+              hasFilter ? 'No resources in this subject' : 'No resources yet',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
                 color: Color(0xFF111827),
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Tap the + button to upload PDF study materials to your library.',
+            Text(
+              hasFilter 
+                ? 'Try selecting a different subject filter' 
+                : 'Tap the + button to upload PDF or Image study materials',
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF9CA3AF),
+                color: Colors.grey.shade500,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,

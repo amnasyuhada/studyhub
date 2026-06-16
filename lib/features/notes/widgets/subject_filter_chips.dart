@@ -13,11 +13,20 @@ class SubjectFilterChips extends ConsumerWidget {
     return subjectsAsync.when(
       data: (subjects) {
         if (subjects.isEmpty) return const SizedBox.shrink();
+        
+        // Sort subjects with "Other" at the end
+        final sortedSubjects = List<String>.from(subjects)
+          ..sort((a, b) {
+            if (a == 'Other') return 1;
+            if (b == 'Other') return -1;
+            return a.compareTo(b);
+          });
+
         return SizedBox(
           height: 44,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
             children: [
               _Chip(
                 label: 'All Notes',
@@ -26,13 +35,17 @@ class SubjectFilterChips extends ConsumerWidget {
                     .read(selectedSubjectProvider.notifier)
                     .state = null,
               ),
-              ...subjects.map((s) => _Chip(
-                    label: s,
-                    isSelected: selectedSubject == s,
-                    onTap: () => ref
-                        .read(selectedSubjectProvider.notifier)
-                        .state = s,
-                  )),
+              const SizedBox(width: 8),
+              ...sortedSubjects.map((s) => Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: _Chip(
+                  label: s,
+                  isSelected: selectedSubject == s,
+                  onTap: () => ref
+                      .read(selectedSubjectProvider.notifier)
+                      .state = s,
+                ),
+              )),
             ],
           ),
         );
@@ -60,13 +73,9 @@ class _Chip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(right: 8),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF4F46E5)
-              : Colors.white,
+          color: isSelected ? const Color(0xFF4F46E5) : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
@@ -78,8 +87,7 @@ class _Chip extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 13,
-            fontWeight:
-                isSelected ? FontWeight.w600 : FontWeight.w400,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             color: isSelected ? Colors.white : const Color(0xFF6B7280),
           ),
         ),

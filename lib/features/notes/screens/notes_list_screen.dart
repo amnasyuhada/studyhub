@@ -75,29 +75,48 @@ class _NotesListScreenState extends ConsumerState<NotesListScreen> {
 
   Widget _buildHeader(BuildContext context, bool showBookmarks){
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 16, 0),
+      padding: const EdgeInsets.fromLTRB(20, 16, 12, 0),
       child: Row(
         children: [
-          const CircleAvatar(
-            radius: 18,
-            backgroundColor: Color(0xFF4F46E5),
-            child: Text('F',
-                style: TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold)),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF4F46E5), Color(0xFF7C3AED)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              'SH',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('StudyHub',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF4F46E5))),
-                Text('Your Study Library',
-                    style:
-                        TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+                Text(
+                  'StudyHub',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF4F46E5),
+                  ),
+                ),
+                Text(
+                  'Your Study Library',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
               ],
             ),
           ),
@@ -117,7 +136,8 @@ class _NotesListScreenState extends ConsumerState<NotesListScreen> {
             icon: const Icon(Icons.folder_outlined, color: Color(0xFF9CA3AF)),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const ResourcesScreen()),),
+              MaterialPageRoute(builder: (_) => const ResourcesScreen()),
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined,

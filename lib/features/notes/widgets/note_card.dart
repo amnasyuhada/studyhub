@@ -145,7 +145,7 @@ class NoteCard extends StatelessWidget {
 
                   // Content preview
                   Text(
-                    note.content,
+                    _stripMarkdown(note.content),
                     style: const TextStyle(
                         fontSize: 13,
                         color: Color(0xFF6B7280),
@@ -193,4 +193,17 @@ class NoteCard extends StatelessWidget {
     ];
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
+}
+
+String _stripMarkdown(String text) {
+  return text
+      .replaceAll('**', '')        // remove bold markers
+      .replaceAll('*', '')         // remove italic markers
+      .replaceAll('`', '')         // remove code markers
+      .replaceAll(RegExp(r'^#{1,6}\s+', multiLine: true), '')   // remove headings
+      .replaceAll(RegExp(r'^>\s+', multiLine: true), '')         // remove blockquotes
+      .replaceAll(RegExp(r'^[-*]\s+', multiLine: true), '')      // remove bullets
+      .replaceAll(RegExp(r'^\d+\.\s+', multiLine: true), '')     // remove numbered lists
+      .replaceAll('\n', ' ')       // collapse newlines to spaces for preview
+      .trim();
 }
