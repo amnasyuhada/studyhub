@@ -6,6 +6,8 @@ import '../../features/auth/screens/register_screen.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
+import '../../features/notes/screens/notes_list_screen.dart';
+import '../../features/resources/screens/resources_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -28,6 +30,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/forgot-password', builder: (ctx, state) => const ForgotPasswordScreen()),
       GoRoute(path: '/profile', builder: (ctx, state) => const ProfileScreen()),
       GoRoute(path: '/profile/edit', builder: (ctx, state) => const EditProfileScreen()),
+      GoRoute(path: '/notes', builder: (ctx, state) => const NotesListScreen()),
+      GoRoute(path: '/resources', builder: (ctx, state) => const ResourcesScreen()),
     ],
   );
 });

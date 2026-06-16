@@ -62,6 +62,10 @@ class ProfileScreen extends ConsumerWidget {
                       horizontal: 32, vertical: 12),
                 ),
               ),
+              ElevatedButton(
+                onPressed: () => context.push('/notes'),
+                child: const Text('Go To Notes'),
+              ),
             ],
           ),
         ),
