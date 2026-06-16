@@ -2,26 +2,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/notes_repository.dart';
 import '../models/note_model.dart';
 
-// ─── Repository ───────────────────────────────────────────────────────────────
+// Repository
 final notesRepositoryProvider = Provider<NotesRepository>((ref) {
   return NotesRepository();
 });
 
-// ─── All notes stream ─────────────────────────────────────────────────────────
 final notesStreamProvider = StreamProvider<List<NoteModel>>((ref) {
   return ref.watch(notesRepositoryProvider).streamNotes();
 });
 
-// ─── Search query ─────────────────────────────────────────────────────────────
+// Search 
 final notesSearchQueryProvider = StateProvider<String>((ref) => '');
 
-// ─── Subject filter ───────────────────────────────────────────────────────────
+// Subject filter 
 final selectedSubjectProvider = StateProvider<String?>((ref) => null);
 
-// ─── Bookmarks only toggle ────────────────────────────────────────────────────
+// Bookmarks toggle 
 final showBookmarksOnlyProvider = StateProvider<bool>((ref) => false);
 
-// ─── Filtered notes ───────────────────────────────────────────────────────────
+// Filtered notes 
 final filteredNotesProvider = Provider<AsyncValue<List<NoteModel>>>((ref) {
   final notesAsync = ref.watch(notesStreamProvider);
   final query = ref.watch(notesSearchQueryProvider).toLowerCase();
@@ -42,7 +41,7 @@ final filteredNotesProvider = Provider<AsyncValue<List<NoteModel>>>((ref) {
   });
 });
 
-// ─── Unique subjects derived from notes ───────────────────────────────────────
+// Derived subjects from notes 
 final subjectsProvider = Provider<AsyncValue<List<String>>>((ref) {
   return ref.watch(notesStreamProvider).whenData((notes) {
     final subjects = notes.map((n) => n.subject).toSet().toList();
@@ -51,7 +50,6 @@ final subjectsProvider = Provider<AsyncValue<List<String>>>((ref) {
   });
 });
 
-// ─── Notes actions notifier ───────────────────────────────────────────────────
 final notesNotifierProvider =
     AsyncNotifierProvider<NotesNotifier, void>(NotesNotifier.new);
 
