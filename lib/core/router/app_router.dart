@@ -188,7 +188,7 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
     if (location.startsWith('/profile')) return 4;
     
     // For sub-pages, highlight the parent tab
-    if (location.startsWith('/quiz')) return 1; // Study Goals tab
+    if (location.startsWith('/quiz')) return 0; // Study Goals tab
     if (location.startsWith('/resources')) return 2; // Notes tab
     if (location.startsWith('/achievements')) return 3; // Analytics tab
     

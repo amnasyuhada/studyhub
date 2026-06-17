@@ -18,7 +18,7 @@ class QuizHistoryScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF4F46E5)),
-          onPressed: () => context.go('/profile'),
+          onPressed: () => context.go('/dashboard'),
           ),
           title: const Text('Quiz History',
           style: TextStyle(

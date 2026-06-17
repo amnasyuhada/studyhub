@@ -19,7 +19,7 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF4F46E5)),
-          onPressed: () => context.go('/profile'),
+          onPressed: () => context.go('/dashboard'),
         ),
         title: const Text(
           'Progress Analytics',
@@ -115,7 +115,6 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
                 final sorted = [...attempts]
                   ..sort(
                       (a, b) => a.dateAttempted.compareTo(b.dateAttempted));
-                final recent = sorted.take(7).toList();
 
                 return Container(
                   height: 220,
@@ -124,81 +123,90 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: BarChart(
-                    BarChartData(
-                      alignment: BarChartAlignment.spaceAround,
-                      maxY: 100,
-                      barTouchData: BarTouchData(
-                        touchTooltipData: BarTouchTooltipData(
-                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                            return BarTooltipItem(
-                              '${rod.toY.toStringAsFixed(0)}%',
-                              const TextStyle(color: Colors.white),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: sorted.length * 50.0,
+                      child: BarChart(
+                        BarChartData(
+                          alignment: BarChartAlignment.spaceAround,
+                          maxY: 110,
+                          barTouchData: BarTouchData(
+                            touchTooltipData: BarTouchTooltipData(
+                              getTooltipItem:
+                                  (group, groupIndex, rod, rodIndex) {
+                                return BarTooltipItem(
+                                  '${rod.toY.toStringAsFixed(0)}%',
+                                  const TextStyle(color: Colors.white),
+                                );
+                              },
+                            ),
+                          ),
+                          titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 32,
+                                getTitlesWidget: (value, meta) {
+                                  if (value > 100) return const Text('');
+                                  return Text(
+                                    '${value.toInt()}%',
+                                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                                  );
+                                },
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  final index = value.toInt();
+                                  if (index >= sorted.length) {
+                                    return const Text('');
+                                  }
+                                  return Text(
+                                    'Q${index + 1}',
+                                    style: const TextStyle(
+                                        fontSize: 11, color: Colors.grey),
+                                  );
+                                },
+                              ),
+                            ),
+                            rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
+                            topTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
+                          ),
+                          gridData: FlGridData(
+                            drawVerticalLine: false,
+                            horizontalInterval: 20,
+                            getDrawingHorizontalLine: (value) => FlLine(
+                              color: Colors.grey.shade200,
+                              strokeWidth: 1,
+                            ),
+                          ),
+                          borderData: FlBorderData(show: false),
+                          barGroups: sorted.asMap().entries.map((e) {
+                            final score = e.value.percentage;
+                            final color = score >= 80
+                                ? Colors.green
+                                : score >= 50
+                                    ? const Color(0xFF4F46E5)
+                                    : Colors.red;
+                            return BarChartGroupData(
+                              x: e.key,
+                              barRods: [
+                                BarChartRodData(
+                                  toY: score,
+                                  color: color,
+                                  width: 20,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ],
                             );
-                          },
+                          }).toList(),
                         ),
                       ),
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 32,
-                            getTitlesWidget: (value, meta) => Text(
-                              '${value.toInt()}%',
-                              style: const TextStyle(
-                                  fontSize: 10, color: Colors.grey),
-                            ),
-                          ),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, meta) {
-                              final index = value.toInt();
-                              if (index >= recent.length) {
-                                return const Text('');
-                              }
-                              return Text(
-                                'Q${index + 1}',
-                                style: const TextStyle(
-                                    fontSize: 11, color: Colors.grey),
-                              );
-                            },
-                          ),
-                        ),
-                        rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                        topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                      ),
-                      gridData: FlGridData(
-                        drawVerticalLine: false,
-                        horizontalInterval: 25,
-                        getDrawingHorizontalLine: (value) => FlLine(
-                          color: Colors.grey.shade200,
-                          strokeWidth: 1,
-                        ),
-                      ),
-                      borderData: FlBorderData(show: false),
-                      barGroups: recent.asMap().entries.map((e) {
-                        final score = e.value.percentage;
-                        final color = score >= 80
-                            ? Colors.green
-                            : score >= 50
-                                ? const Color(0xFF4F46E5)
-                                : Colors.red;
-                        return BarChartGroupData(
-                          x: e.key,
-                          barRods: [
-                            BarChartRodData(
-                              toY: score,
-                              color: color,
-                              width: 20,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ],
-                        );
-                      }).toList(),
                     ),
                   ),
                 );
@@ -238,7 +246,6 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
                 final sorted = [...attempts]
                   ..sort(
                       (a, b) => a.dateAttempted.compareTo(b.dateAttempted));
-                final recent = sorted.take(7).toList();
 
                 return Container(
                   height: 220,
@@ -247,87 +254,95 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: LineChart(
-                    LineChartData(
-                      maxY: 100,
-                      minY: 0,
-                      lineTouchData: LineTouchData(
-                        touchTooltipData: LineTouchTooltipData(
-                          getTooltipItems: (spots) => spots
-                              .map((s) => LineTooltipItem(
-                                    '${s.y.toStringAsFixed(0)}%',
-                                    const TextStyle(color: Colors.white),
-                                  ))
-                              .toList(),
-                        ),
-                      ),
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 32,
-                            getTitlesWidget: (value, meta) => Text(
-                              '${value.toInt()}%',
-                              style: const TextStyle(
-                                  fontSize: 10, color: Colors.grey),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: (sorted.length * 50.0),
+                      child: LineChart(
+                        LineChartData(
+                          maxY: 110,
+                          minY: 0,
+                          lineTouchData: LineTouchData(
+                            touchTooltipData: LineTouchTooltipData(
+                              getTooltipItems: (spots) => spots
+                                  .map((s) => LineTooltipItem(
+                                        '${s.y.toStringAsFixed(0)}%',
+                                        const TextStyle(color: Colors.white),
+                                      ))
+                                  .toList(),
                             ),
                           ),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, meta) {
-                              final index = value.toInt();
-                              if (index >= recent.length) {
-                                return const Text('');
-                              }
-                              return Text(
-                                'Q${index + 1}',
-                                style: const TextStyle(
-                                    fontSize: 11, color: Colors.grey),
-                              );
-                            },
+                          titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 32,
+                                getTitlesWidget: (value, meta) {
+                                  if (value > 100) return const Text('');
+                                  return Text(
+                                    '${value.toInt()}%',
+                                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                                  );
+                                },
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  final index = value.toInt();
+                                  if (index >= sorted.length) {
+                                    return const Text('');
+                                  }
+                                  return Text(
+                                    'Q${index + 1}',
+                                    style: const TextStyle(
+                                        fontSize: 11, color: Colors.grey),
+                                  );
+                                },
+                              ),
+                            ),
+                            rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
+                            topTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
                           ),
-                        ),
-                        rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                        topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                      ),
-                      gridData: FlGridData(
-                        drawVerticalLine: false,
-                        horizontalInterval: 25,
-                        getDrawingHorizontalLine: (value) => FlLine(
-                          color: Colors.grey.shade200,
-                          strokeWidth: 1,
-                        ),
-                      ),
-                      borderData: FlBorderData(show: false),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: recent.asMap().entries.map((e) {
-                            return FlSpot(
-                                e.key.toDouble(), e.value.percentage);
-                          }).toList(),
-                          isCurved: true,
-                          color: const Color(0xFF4F46E5),
-                          barWidth: 3,
-                          dotData: FlDotData(
-                            getDotPainter: (spot, percent, bar, index) =>
-                                FlDotCirclePainter(
-                              radius: 5,
+                          gridData: FlGridData(
+                            drawVerticalLine: false,
+                            horizontalInterval: 25,
+                            getDrawingHorizontalLine: (value) => FlLine(
+                              color: Colors.grey.shade200,
+                              strokeWidth: 1,
+                            ),
+                          ),
+                          borderData: FlBorderData(show: false),
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: sorted.asMap().entries.map((e) {
+                                return FlSpot(
+                                    e.key.toDouble(), e.value.percentage);
+                              }).toList(),
+                              isCurved: true,
                               color: const Color(0xFF4F46E5),
-                              strokeWidth: 2,
-                              strokeColor: Colors.white,
+                              barWidth: 3,
+                              dotData: FlDotData(
+                                getDotPainter: (spot, percent, bar, index) =>
+                                    FlDotCirclePainter(
+                                  radius: 5,
+                                  color: const Color(0xFF4F46E5),
+                                  strokeWidth: 2,
+                                  strokeColor: Colors.white,
+                                ),
+                              ),
+                              belowBarData: BarAreaData(
+                                show: true,
+                                color: const Color(0xFF4F46E5)
+                                    .withOpacity(0.1),
+                              ),
                             ),
-                          ),
-                          belowBarData: BarAreaData(
-                            show: true,
-                            color: const Color(0xFF4F46E5)
-                                .withOpacity( 0.1),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 );
@@ -444,7 +459,7 @@ class _StatCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity( 0.1),
+                color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 20),

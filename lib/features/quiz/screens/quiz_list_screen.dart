@@ -18,24 +18,23 @@ class QuizListScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF4F46E5)),
-          onPressed: () => context.go('/profile'),
-          ),
-          title: const Text('Quizzes',
+          onPressed: () => context.go('/dashboard'),
+        ),
+        title: const Text(
+          'Quizzes',
           style: TextStyle(
             color: Color(0xFF4F46E5),
             fontWeight: FontWeight.bold,
             fontSize: 22,
-            ),
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined,
-                color: Color(0xFF4F46E5)),
-                onPressed: () {},
-                ),
-                ],
-                ),
-
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined, color: Color(0xFF4F46E5)),
+            onPressed: () {},
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF4F46E5),
         onPressed: () => _showAddQuizDialog(context, ref),
@@ -51,12 +50,10 @@ class QuizListScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.quiz_outlined,
-                      size: 64, color: Colors.grey.shade400),
+                  Icon(Icons.quiz_outlined, size: 64, color: Colors.grey.shade400),
                   const SizedBox(height: 16),
                   Text('No quizzes yet!',
-                      style: TextStyle(
-                          fontSize: 18, color: Colors.grey.shade500)),
+                      style: TextStyle(fontSize: 18, color: Colors.grey.shade500)),
                   const SizedBox(height: 8),
                   Text('Tap + to create your first quiz',
                       style: TextStyle(color: Colors.grey.shade400)),
@@ -68,8 +65,7 @@ class QuizListScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             itemCount: quizzes.length,
             itemBuilder: (context, index) {
-              final quiz = quizzes[index];
-              return _QuizCard(quiz: quiz);
+              return _QuizCard(quiz: quizzes[index]);
             },
           );
         },
@@ -85,11 +81,9 @@ class QuizListScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Create Quiz',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: Color(0xFF4F46E5))),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF4F46E5))),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -98,12 +92,10 @@ class QuizListScreen extends ConsumerWidget {
                 controller: titleController,
                 decoration: InputDecoration(
                   labelText: 'Quiz Title',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF4F46E5), width: 2),
+                    borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
                   ),
                 ),
               ),
@@ -112,12 +104,10 @@ class QuizListScreen extends ConsumerWidget {
                 controller: subjectController,
                 decoration: InputDecoration(
                   labelText: 'Subject',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF4F46E5), width: 2),
+                    borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
                   ),
                 ),
               ),
@@ -127,12 +117,10 @@ class QuizListScreen extends ConsumerWidget {
                 maxLines: 2,
                 decoration: InputDecoration(
                   labelText: 'Description',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF4F46E5), width: 2),
+                    borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
                   ),
                 ),
               ),
@@ -142,14 +130,12 @@ class QuizListScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child:
-                const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF4F46E5),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () async {
               if (titleController.text.isEmpty) return;
@@ -164,8 +150,7 @@ class QuizListScreen extends ConsumerWidget {
               await ref.read(quizNotifierProvider.notifier).addQuiz(quiz);
               if (context.mounted) Navigator.pop(context);
             },
-            child: const Text('Create',
-                style: TextStyle(color: Colors.white)),
+            child: const Text('Create', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -203,7 +188,7 @@ class _QuizCard extends ConsumerWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: subjectColor.withOpacity( 0.15),
+                  color: subjectColor.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(Icons.quiz, color: subjectColor, size: 28),
@@ -222,10 +207,9 @@ class _QuizCard extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: subjectColor.withOpacity( 0.1),
+                        color: subjectColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -254,30 +238,34 @@ class _QuizCard extends ConsumerWidget {
                 icon: const Icon(Icons.more_vert, color: Colors.grey),
                 itemBuilder: (context) => [
                   const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(children: [
+                        Icon(Icons.edit_outlined, size: 18, color: Color(0xFF4F46E5)),
+                        SizedBox(width: 8),
+                        Text('Edit Quiz'),
+                      ])),
+                  const PopupMenuItem(
                       value: 'add',
                       child: Row(children: [
-                        Icon(Icons.add_circle_outline,
-                            size: 18, color: Color(0xFF4F46E5)),
+                        Icon(Icons.add_circle_outline, size: 18, color: Color(0xFF4F46E5)),
                         SizedBox(width: 8),
                         Text('Add Questions'),
                       ])),
                   const PopupMenuItem(
                       value: 'delete',
                       child: Row(children: [
-                        Icon(Icons.delete_outline,
-                            size: 18, color: Colors.red),
+                        Icon(Icons.delete_outline, size: 18, color: Colors.red),
                         SizedBox(width: 8),
-                        Text('Delete Quiz',
-                            style: TextStyle(color: Colors.red)),
+                        Text('Delete Quiz', style: TextStyle(color: Colors.red)),
                       ])),
                 ],
                 onSelected: (value) async {
-                  if (value == 'add') {
+                  if (value == 'edit') {
+                    _showEditQuizDialog(context, ref);
+                  } else if (value == 'add') {
                     context.push('/quiz-add-questions', extra: quiz);
                   } else if (value == 'delete') {
-                    await ref
-                        .read(quizRepositoryProvider)
-                        .deleteQuiz(quiz.id);
+                    await ref.read(quizRepositoryProvider).deleteQuiz(quiz.id);
                   }
                 },
               ),
@@ -288,12 +276,94 @@ class _QuizCard extends ConsumerWidget {
     );
   }
 
+  void _showEditQuizDialog(BuildContext context, WidgetRef ref) {
+    final titleController = TextEditingController(text: quiz.title);
+    final subjectController = TextEditingController(text: quiz.subject);
+    final descController = TextEditingController(text: quiz.description);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Edit Quiz',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF4F46E5))),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(
+                  labelText: 'Quiz Title',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: subjectController,
+                decoration: InputDecoration(
+                  labelText: 'Subject',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: descController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4F46E5),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () async {
+              if (titleController.text.isEmpty) return;
+              final updatedQuiz = Quiz(
+                id: quiz.id,
+                title: titleController.text.trim(),
+                subject: subjectController.text.trim(),
+                description: descController.text.trim(),
+                questions: quiz.questions,
+                createdAt: quiz.createdAt,
+              );
+              await ref.read(quizRepositoryProvider).updateQuiz(updatedQuiz);
+              if (context.mounted) Navigator.pop(context);
+            },
+            child: const Text('Save Changes', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Color _getSubjectColor(String subject) {
     final s = subject.toLowerCase();
     if (s.contains('math')) return Colors.orange;
-    if (s.contains('computer') || s.contains('programming')) {
-      return const Color(0xFF4F46E5);
-    }
+    if (s.contains('computer') || s.contains('programming')) return const Color(0xFF4F46E5);
     if (s.contains('science')) return Colors.green;
     if (s.contains('english') || s.contains('language')) return Colors.blue;
     return Colors.purple;

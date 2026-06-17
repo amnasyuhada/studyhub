@@ -19,8 +19,8 @@ class AchievementScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Color(0xFF4F46E5)),
-          onPressed: () => context.pop(),
-        ),
+          onPressed: () => context.go('/dashboard'),
+          ),
         title: Text(
           'Achievements',
           style: TextStyle(
