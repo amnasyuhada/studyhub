@@ -26,7 +26,9 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     initialLocation: '/login',
+    refreshListenable: _AuthStateNotifier(ref),
     redirect: (context, state) {
+      if (authState.isLoading) return null;
       final isLoggedIn = authState.valueOrNull != null;
       final isOnAuth = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register' ||
@@ -267,5 +269,11 @@ class _MainNavigationShellState extends ConsumerState<MainNavigationShell> {
         ],
       ),
     );
+  }
+}
+
+class _AuthStateNotifier extends ChangeNotifier {
+  _AuthStateNotifier(Ref ref) {
+    ref.listen(authStateProvider, (_, __) => notifyListeners());
   }
 }

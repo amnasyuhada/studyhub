@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/profile_provider.dart';
 import '../../auth/providers/auth_provider.dart';
+import 'dart:convert';
 
 const kPrimaryColor = Color(0xFF3D3AC1);
 const kBackgroundColor = Color(0xFFF0F0F7);
@@ -13,7 +14,13 @@ const kTextGrey = Color(0xFF8A8A9A);
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
-
+  ImageProvider _getImageProvider(String imageUrl) {
+    if (imageUrl.startsWith('data:image')) {
+      final base64Data = imageUrl.split(',')[1];
+      return MemoryImage(base64Decode(base64Data));
+    }
+    return NetworkImage(imageUrl);
+}
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(profileProvider);
@@ -61,7 +68,7 @@ class ProfileScreen extends ConsumerWidget {
                           radius: 52,
                           backgroundColor: kPrimaryColor.withOpacity(0.15),
                           backgroundImage: profile?['profileImageUrl'] != null
-                              ? NetworkImage(profile!['profileImageUrl'])
+                              ? _getImageProvider(profile!['profileImageUrl'])
                               : null,
                           child: profile?['profileImageUrl'] == null
                               ? const Icon(Icons.person_rounded,
@@ -367,30 +374,29 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   void _showLogoutDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () async {
-              Navigator.pop(ctx);
-              await ref.read(authRepositoryProvider).signOut();
-              if (context.mounted) context.go('/login');
-            },
-            child:
-                const Text('Logout', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: const Text('Logout'),
+      content: const Text('Are you sure you want to logout?'),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel')),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () async {
+            Navigator.pop(ctx);
+            await ref.read(authRepositoryProvider).signOut();
+            if (context.mounted) context.go('/login');
+          },
+          child: const Text('Logout', style: TextStyle(color: Colors.white)),
+        ),
+      ],
+    ),
+  );
+}
 
   void _showDeleteDialog(BuildContext context, WidgetRef ref) {
     showDialog(
@@ -416,49 +422,152 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   void _showChangePasswordDialog(BuildContext context, WidgetRef ref) {
-    final controller = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Change Password'),
-        content: TextField(
-          controller: controller,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: 'New Password',
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+  final currentPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (ctx) {
+      bool isLoading = false;
+      return StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Change Password',
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: kTextDark)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: currentPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Current Password',
+                  prefixIcon: const Icon(Icons.lock_outline,
+                      color: kTextGrey, size: 20),
+                  filled: true,
+                  fillColor: kBackgroundColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        const BorderSide(color: kPrimaryColor, width: 1.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: newPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'New Password',
+                  prefixIcon: const Icon(Icons.lock_outline,
+                      color: kTextGrey, size: 20),
+                  filled: true,
+                  fillColor: kBackgroundColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        const BorderSide(color: kPrimaryColor, width: 1.5),
+                  ),
+                ),
+              ),
+              if (isLoading) ...[
+                const SizedBox(height: 16),
+                const LinearProgressIndicator(color: kPrimaryColor),
+              ],
+            ],
           ),
+          actions: [
+            TextButton(
+              onPressed:
+                  isLoading ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancel',
+                  style: TextStyle(color: kTextGrey)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kPrimaryColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (currentPasswordController.text.isEmpty ||
+                          newPasswordController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill in both fields'),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                        return;
+                      }
+                      if (newPasswordController.text.length < 6) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'New password must be at least 6 characters'),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                        return;
+                      }
+
+                      setDialogState(() => isLoading = true);
+
+                      try {
+                        await ref
+                            .read(authRepositoryProvider)
+                            .reauthenticateAndChangePassword(
+                              currentPasswordController.text,
+                              newPasswordController.text,
+                            );
+                        if (ctx.mounted) Navigator.pop(ctx);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text('Password updated successfully!'),
+                              backgroundColor: kPrimaryColor,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        setDialogState(() => isLoading = false);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  e.toString().contains('wrong-password') ||
+                                          e.toString().contains('invalid-credential')
+                                      ? 'Current password is incorrect'
+                                      : 'Error: ${e.toString()}'),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
+                        }
+                      }
+                    },
+              child: const Text('Update',
+                  style: TextStyle(color: Colors.white)),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
-          ElevatedButton(
-            style:
-                ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
-            onPressed: () async {
-              if (controller.text.length >= 6) {
-                await ref
-                    .read(authRepositoryProvider)
-                    .changePassword(controller.text);
-                if (ctx.mounted) Navigator.pop(ctx);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Password updated successfully')),
-                  );
-                }
-              }
-            },
-            child: const Text('Update',
-                style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
+      );
+    },
+  );
+}
 }
 
 // ─── Reusable Widgets ───────────────────────────────────────────────────────

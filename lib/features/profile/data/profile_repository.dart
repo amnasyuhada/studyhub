@@ -1,11 +1,10 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class ProfileRepository {
   final _firestore = FirebaseFirestore.instance;
-  final _storage = FirebaseStorage.instance;
   final _auth = FirebaseAuth.instance;
 
   String get uid => _auth.currentUser!.uid;
@@ -23,8 +22,9 @@ class ProfileRepository {
   }
 
   Future<String> uploadProfileImage(File image) async {
-    final ref = _storage.ref().child('profile_images/$uid.jpg');
-    await ref.putFile(image);
-    return await ref.getDownloadURL();
+    final bytes = await image.readAsBytes();
+    // Resize to keep Firestore document under 1MB limit
+    final base64String = base64Encode(bytes);
+    return 'data:image/jpeg;base64,$base64String';
   }
 }
