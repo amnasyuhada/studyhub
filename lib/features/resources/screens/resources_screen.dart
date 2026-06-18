@@ -15,7 +15,6 @@ class ResourcesScreen extends ConsumerStatefulWidget {
 }
 
 class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
-  // Color palette auto-assigned to new subjects (cycles if more than 8 added)
   static const List<Color> _subjectColors = [
     Color(0xFF4F46E5),
     Color(0xFF2563EB),
@@ -27,7 +26,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     Color(0xFF0D9488),
   ];
 
-  // Mutable subject list — users can add to this
+  // users can add subject
   final List<String> _subjects = [
     'Computer Science',
     'Mathematics',
@@ -43,8 +42,6 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
   }
 
   String? _selectedSubject;
-
-  // ─── Build ────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -123,10 +120,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     );
   }
 
-  // ─── Subject filter row ───────────────────────────────────────────────────
-
   Widget _buildSubjectFilter() {
-    // Keep "Other" at the end
     final sorted = [..._subjects]
       ..sort((a, b) {
         if (a == 'Other') return 1;
@@ -142,7 +136,6 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           children: [
-            // "All" chip
             _FilterChip(
               label: 'All',
               isSelected: _selectedSubject == null,
@@ -150,7 +143,6 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
             ),
             const SizedBox(width: 8),
 
-            // Subject chips
             ...sorted.map((subject) => Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: _FilterChip(
@@ -161,7 +153,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
                   ),
                 )),
 
-            // ── "+ Add Subject" chip ──────────────────────────────────────
+            // + Add Subject
             GestureDetector(
               onTap: _showAddSubjectDialog,
               child: AnimatedContainer(
@@ -199,8 +191,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     );
   }
 
-  // ─── Add subject dialog ───────────────────────────────────────────────────
-
+  // Add subject 
   void _showAddSubjectDialog({ValueChanged<String>? onAdded}) {
     final controller = TextEditingController();
     String? errorText;
@@ -277,11 +268,9 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
                   return;
                 }
 
-                // Add the new subject and close
                 setState(() => _subjects.add(name));
                 Navigator.pop(ctx);
 
-                // Callback used when triggered from the upload dialog
                 onAdded?.call(name);
               },
               child: const Text('Add'),
@@ -292,7 +281,6 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     );
   }
 
-  // ─── Empty state ──────────────────────────────────────────────────────────
 
   Widget _buildEmptyState(bool hasFilter) {
     return Center(
@@ -350,8 +338,6 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     );
   }
 
-  // ─── File picking & upload ─────────────────────────────────────────────────
-
   Future<void> _pickAndUploadFile(String fileType) async {
     FilePickerResult? result;
 
@@ -373,21 +359,16 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     _showSubjectDialog(file, fileType);
   }
 
-  /// Upload dialog — includes an "Add new subject…" option at the bottom of
-  /// the dropdown so users can create subjects without leaving the flow.
   void _showSubjectDialog(PlatformFile file, String fileType) {
-    // Start with the first non-Other subject, or fall back to the first item.
     String selectedSubject =
         _subjects.firstWhere((s) => s != 'Other', orElse: () => _subjects.first);
 
-    // Sentinel value used to represent "add a new subject" in the dropdown.
     const addNewSentinel = '__add_new__';
 
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) {
-          // Build sorted list with "Other" last, sentinel at the very end.
           final sorted = [..._subjects]
             ..sort((a, b) {
               if (a == 'Other') return 1;
@@ -423,7 +404,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
                           value: subject,
                           child: Text(subject),
                         )),
-                    // "Add new subject…" option
+                    // Add new subject option
                     const DropdownMenuItem(
                       value: addNewSentinel,
                       child: Row(
@@ -444,7 +425,6 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
                   ],
                   onChanged: (value) {
                     if (value == addNewSentinel) {
-                      // Open the add-subject dialog; on success update selection
                       _showAddSubjectDialog(
                         onAdded: (newSubject) {
                           setDialogState(() => selectedSubject = newSubject);
@@ -501,8 +481,6 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     );
   }
 
-  // ─── Resource opening ─────────────────────────────────────────────────────
-
   void _openResource(ResourceModel resource) {
     if (resource.fileType == 'pdf') {
       Navigator.push(
@@ -527,7 +505,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     }
   }
 
-  // ─── Delete ───────────────────────────────────────────────────────────────
+  //  Delete resource
 
   void _confirmDelete(ResourceModel resource) {
     showDialog(
@@ -563,7 +541,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     );
   }
 
-  // ─── Info dialog ──────────────────────────────────────────────────────────
+  // Info dialog 
 
   void _showInfoDialog() {
     showDialog(
@@ -597,7 +575,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     );
   }
 
-  // ─── Upload bottom sheet ──────────────────────────────────────────────────
+  //  Upload sheet 
 
   void _showUploadOptions() {
     showModalBottomSheet(
@@ -694,7 +672,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
   }
 }
 
-// ─── Filter chip ──────────────────────────────────────────────────────────────
+//  Filter 
 
 class _FilterChip extends StatelessWidget {
   final String label;
