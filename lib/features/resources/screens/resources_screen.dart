@@ -15,16 +15,36 @@ class ResourcesScreen extends ConsumerStatefulWidget {
 }
 
 class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
-  final Map<String, String> _subjects = {
-    'Computer Science': '#4F46E5',
-    'Mathematics': '#2563EB',
-    'Physics': '#059669',
-    'Engineering': '#D97706',
-    'Business': '#0891B2',
-    'Other': '#6B7280',
-  };
-  
+  // Color palette auto-assigned to new subjects (cycles if more than 8 added)
+  static const List<Color> _subjectColors = [
+    Color(0xFF4F46E5),
+    Color(0xFF2563EB),
+    Color(0xFF059669),
+    Color(0xFFD97706),
+    Color(0xFF0891B2),
+    Color(0xFFDC2626),
+    Color(0xFF7C3AED),
+    Color(0xFF0D9488),
+  ];
+
+  // Mutable subject list — users can add to this
+  final List<String> _subjects = [
+    'Computer Science',
+    'Mathematics',
+    'Physics',
+    'Engineering',
+    'Business',
+    'Other',
+  ];
+
+  Color _colorForSubject(String subject) {
+    final index = _subjects.indexOf(subject);
+    return _subjectColors[index % _subjectColors.length];
+  }
+
   String? _selectedSubject;
+
+  // ─── Build ────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +67,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline, color: Color(0xFF6B7280)),
-            onPressed: () => _showInfoDialog(),
+            onPressed: _showInfoDialog,
           ),
         ],
       ),
@@ -59,12 +79,14 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
               data: (resources) {
                 final filtered = _selectedSubject == null
                     ? resources
-                    : resources.where((r) => r.subject == _selectedSubject).toList();
-                
+                    : resources
+                        .where((r) => r.subject == _selectedSubject)
+                        .toList();
+
                 if (filtered.isEmpty) {
                   return _buildEmptyState(_selectedSubject != null);
                 }
-                
+
                 return ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
                   itemCount: filtered.length,
@@ -84,7 +106,8 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
               error: (e, _) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text('Error: $e', style: const TextStyle(color: Colors.red)),
+                  child:
+                      Text('Error: $e', style: const TextStyle(color: Colors.red)),
                 ),
               ),
             ),
@@ -100,9 +123,11 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     );
   }
 
+  // ─── Subject filter row ───────────────────────────────────────────────────
+
   Widget _buildSubjectFilter() {
-    // Sort subjects with "Other" at the end
-    final sortedSubjects = _subjects.keys.toList()
+    // Keep "Other" at the end
+    final sorted = [..._subjects]
       ..sort((a, b) {
         if (a == 'Other') return 1;
         if (b == 'Other') return -1;
@@ -117,25 +142,157 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           children: [
+            // "All" chip
             _FilterChip(
               label: 'All',
               isSelected: _selectedSubject == null,
               onTap: () => setState(() => _selectedSubject = null),
             ),
             const SizedBox(width: 8),
-            ...sortedSubjects.map((subject) => Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: _FilterChip(
-                label: subject,
-                isSelected: _selectedSubject == subject,
-                onTap: () => setState(() => _selectedSubject = subject),
+
+            // Subject chips
+            ...sorted.map((subject) => Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _FilterChip(
+                    label: subject,
+                    isSelected: _selectedSubject == subject,
+                    onTap: () =>
+                        setState(() => _selectedSubject = subject),
+                  ),
+                )),
+
+            // ── "+ Add Subject" chip ──────────────────────────────────────
+            GestureDetector(
+              onTap: _showAddSubjectDialog,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFF4F46E5),
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add, size: 14, color: Color(0xFF4F46E5)),
+                    SizedBox(width: 4),
+                    Text(
+                      'Add Subject',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF4F46E5),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
     );
   }
+
+  // ─── Add subject dialog ───────────────────────────────────────────────────
+
+  void _showAddSubjectDialog({ValueChanged<String>? onAdded}) {
+    final controller = TextEditingController();
+    String? errorText;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('New Subject'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Enter a subject name to add it to your library.',
+                style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  hintText: 'e.g. Chemistry, History…',
+                  errorText: errorText,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFF4F46E5)),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 12),
+                ),
+                onChanged: (_) {
+                  if (errorText != null) {
+                    setDialogState(() => errorText = null);
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4F46E5),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () {
+                final name = controller.text.trim();
+
+                if (name.isEmpty) {
+                  setDialogState(
+                      () => errorText = 'Please enter a subject name.');
+                  return;
+                }
+
+                final alreadyExists = _subjects
+                    .map((s) => s.toLowerCase())
+                    .contains(name.toLowerCase());
+
+                if (alreadyExists) {
+                  setDialogState(
+                      () => errorText = 'That subject already exists.');
+                  return;
+                }
+
+                // Add the new subject and close
+                setState(() => _subjects.add(name));
+                Navigator.pop(ctx);
+
+                // Callback used when triggered from the upload dialog
+                onAdded?.call(name);
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─── Empty state ──────────────────────────────────────────────────────────
 
   Widget _buildEmptyState(bool hasFilter) {
     return Center(
@@ -149,7 +306,10 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
               height: 100,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [const Color(0xFF4F46E5).withOpacity(0.1), const Color(0xFF7C3AED).withOpacity(0.05)],
+                  colors: [
+                    const Color(0xFF4F46E5).withOpacity(0.1),
+                    const Color(0xFF7C3AED).withOpacity(0.05),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -158,7 +318,9 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
               child: Icon(
                 hasFilter ? Icons.search_off : Icons.folder_open,
                 size: 44,
-                color: hasFilter ? Colors.grey.shade400 : const Color(0xFF4F46E5),
+                color: hasFilter
+                    ? Colors.grey.shade400
+                    : const Color(0xFF4F46E5),
               ),
             ),
             const SizedBox(height: 24),
@@ -172,9 +334,9 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              hasFilter 
-                ? 'Try selecting a different subject filter' 
-                : 'Tap the + button to upload PDF or Image study materials',
+              hasFilter
+                  ? 'Try selecting a different subject filter'
+                  : 'Tap the + button to upload PDF or Image study materials',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade500,
@@ -187,6 +349,8 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
       ),
     );
   }
+
+  // ─── File picking & upload ─────────────────────────────────────────────────
 
   Future<void> _pickAndUploadFile(String fileType) async {
     FilePickerResult? result;
@@ -209,103 +373,168 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
     _showSubjectDialog(file, fileType);
   }
 
+  /// Upload dialog — includes an "Add new subject…" option at the bottom of
+  /// the dropdown so users can create subjects without leaving the flow.
   void _showSubjectDialog(PlatformFile file, String fileType) {
-    String? selectedSubject = _subjects.keys.first;
-    
+    // Start with the first non-Other subject, or fall back to the first item.
+    String selectedSubject =
+        _subjects.firstWhere((s) => s != 'Other', orElse: () => _subjects.first);
+
+    // Sentinel value used to represent "add a new subject" in the dropdown.
+    const addNewSentinel = '__add_new__';
+
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Add ${fileType.toUpperCase()}'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('File: ${file.name}'),
-            const SizedBox(height: 8),
-            Text('Type: ${fileType.toUpperCase()}'),
-            const SizedBox(height: 16),
-            const Text('Choose a subject:'),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: selectedSubject,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              ),
-              items: _subjects.keys.map((subject) {
-                return DropdownMenuItem(
-                  value: subject,
-                  child: Text(subject),
-                );
-              }).toList(),
-              onChanged: (value) => selectedSubject = value,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              
-              // Save to Firestore
-              await ref.read(resourcesNotifierProvider.notifier).addResource(
-                title: file.name.replaceAll(RegExp(r'\.[^.]+$'), ''), // Remove extension
-                subject: selectedSubject!,
-                fileType: fileType,
-                localPath: file.path!,
-              );
-              
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${fileType.toUpperCase()} uploaded successfully!'),
-                    backgroundColor: Colors.green,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) {
+          // Build sorted list with "Other" last, sentinel at the very end.
+          final sorted = [..._subjects]
+            ..sort((a, b) {
+              if (a == 'Other') return 1;
+              if (b == 'Other') return -1;
+              return a.compareTo(b);
+            });
+
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16)),
+            title: Text('Add ${fileType.toUpperCase()}'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('File: ${file.name}'),
+                const SizedBox(height: 4),
+                Text('Type: ${fileType.toUpperCase()}'),
+                const SizedBox(height: 16),
+                const Text('Choose a subject:'),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: selectedSubject,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 12),
                   ),
-                );
-              }
-            },
-            child: const Text('Upload'),
-          ),
-        ],
+                  items: [
+                    // Regular subjects
+                    ...sorted.map((subject) => DropdownMenuItem(
+                          value: subject,
+                          child: Text(subject),
+                        )),
+                    // "Add new subject…" option
+                    const DropdownMenuItem(
+                      value: addNewSentinel,
+                      child: Row(
+                        children: [
+                          Icon(Icons.add_circle_outline,
+                              size: 16, color: Color(0xFF4F46E5)),
+                          SizedBox(width: 6),
+                          Text(
+                            'Add new subject…',
+                            style: TextStyle(
+                              color: Color(0xFF4F46E5),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value == addNewSentinel) {
+                      // Open the add-subject dialog; on success update selection
+                      _showAddSubjectDialog(
+                        onAdded: (newSubject) {
+                          setDialogState(() => selectedSubject = newSubject);
+                        },
+                      );
+                    } else if (value != null) {
+                      setDialogState(() => selectedSubject = value);
+                    }
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4F46E5),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () async {
+                  Navigator.pop(ctx);
+
+                  await ref
+                      .read(resourcesNotifierProvider.notifier)
+                      .addResource(
+                        title: file.name
+                            .replaceAll(RegExp(r'\.[^.]+$'), ''),
+                        subject: selectedSubject,
+                        fileType: fileType,
+                        localPath: file.path!,
+                      );
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            '${fileType.toUpperCase()} uploaded successfully!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Upload'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-    void _openResource(ResourceModel resource) {
-      if (resource.fileType == 'pdf') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => PdfViewerScreen(
-              title: resource.title,
-              filePath: resource.localPath,
-            ),
+  // ─── Resource opening ─────────────────────────────────────────────────────
+
+  void _openResource(ResourceModel resource) {
+    if (resource.fileType == 'pdf') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PdfViewerScreen(
+            title: resource.title,
+            filePath: resource.localPath,
           ),
-        );
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ImageViewerScreen(
-              title: resource.title,
-              filePath: resource.localPath,
-            ),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ImageViewerScreen(
+            title: resource.title,
+            filePath: resource.localPath,
           ),
-        );
-      }
+        ),
+      );
+    }
   }
+
+  // ─── Delete ───────────────────────────────────────────────────────────────
 
   void _confirmDelete(ResourceModel resource) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Delete Resource'),
         content: Text('Delete "${resource.title}" permanently?'),
         actions: [
@@ -315,9 +544,10 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
           ),
           TextButton(
             onPressed: () {
-              ref.read(resourcesNotifierProvider.notifier).deleteResource(resource.id);
+              ref
+                  .read(resourcesNotifierProvider.notifier)
+                  .deleteResource(resource.id);
               Navigator.pop(ctx);
-              
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Resource deleted'),
@@ -325,18 +555,22 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
                 ),
               );
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child:
+                const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
   }
 
+  // ─── Info dialog ──────────────────────────────────────────────────────────
+
   void _showInfoDialog() {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Resource Library'),
         content: const Column(
           mainAxisSize: MainAxisSize.min,
@@ -345,6 +579,8 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
             Text('• Upload PDF study materials'),
             SizedBox(height: 8),
             Text('• Organize by subject'),
+            SizedBox(height: 8),
+            Text('• Add custom subjects with the "+ Add Subject" chip'),
             SizedBox(height: 8),
             Text('• Access your resources anytime'),
             SizedBox(height: 8),
@@ -360,6 +596,8 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
       ),
     );
   }
+
+  // ─── Upload bottom sheet ──────────────────────────────────────────────────
 
   void _showUploadOptions() {
     showModalBottomSheet(
@@ -384,10 +622,7 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
               const SizedBox(height: 8),
               const Text(
                 'Choose the type of resource to upload',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF6B7280),
-                ),
+                style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
               ),
               const SizedBox(height: 20),
               Row(
@@ -459,6 +694,8 @@ class _ResourcesScreenState extends ConsumerState<ResourcesScreen> {
   }
 }
 
+// ─── Filter chip ──────────────────────────────────────────────────────────────
+
 class _FilterChip extends StatelessWidget {
   final String label;
   final bool isSelected;
@@ -482,7 +719,9 @@ class _FilterChip extends StatelessWidget {
           color: isSelected ? const Color(0xFF4F46E5) : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? const Color(0xFF4F46E5) : const Color(0xFFE5E7EB),
+            color: isSelected
+                ? const Color(0xFF4F46E5)
+                : const Color(0xFFE5E7EB),
           ),
         ),
         child: Text(

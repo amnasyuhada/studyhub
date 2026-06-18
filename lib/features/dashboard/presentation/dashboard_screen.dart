@@ -7,6 +7,7 @@ import '../../../shared/theme/widgets/main_shell.dart';
 import '../../study_sessions/models/study_session.dart';
 import '../../study_sessions/services/study_session_repository.dart';
 import '../../study_sessions/presentation/add_edit_session_screen.dart';
+import '../../study_groups/services/study_group_repository.dart';
 
 /// Dashboard / Home tab — greeting, stat cards, weekly progress chart,
 /// and a quick view of today's upcoming study sessions.
@@ -27,7 +28,10 @@ class DashboardScreen extends StatelessWidget {
     final today = DateTime.now();
 
     return Scaffold(
-      appBar: const StudyHubAppBar(title: 'StudyHub'),
+      appBar: StudyHubAppBar(
+        title: 'StudyHub',
+        onNotificationTap: () => context.push('/notifications'),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(
@@ -53,6 +57,8 @@ class DashboardScreen extends StatelessWidget {
             _buildStudyHoursCard(repo, today),
             const SizedBox(height: 16),
             _buildQuickQuizSection(context), // ✅ NEW: Quick Quiz Section
+            const SizedBox(height: 16),
+            _buildStudyGroupsCard(context), // ✅ Study Groups Section
             const SizedBox(height: 16),
             _buildWeeklyProgress(repo, today),
             const SizedBox(height: 20),
@@ -168,6 +174,78 @@ class DashboardScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  // ✅ Study Groups Section
+  Widget _buildStudyGroupsCard(BuildContext context) {
+    final repo = StudyGroupRepository();
+    return StreamBuilder<List>(
+      stream: repo.watchMyGroups(),
+      builder: (context, snapshot) {
+        final groups = snapshot.data ?? [];
+        final groupCount = groups.length;
+
+        return AccentCard(
+          accentColor: AppColors.primary,
+          onTap: () => context.push('/study-groups'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Study Groups',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  StatusBadge(
+                    label: groupCount == 0
+                        ? 'No groups'
+                        : '$groupCount ${groupCount == 1 ? 'group' : 'groups'}',
+                    color: AppColors.primary,
+                    icon: Icons.groups_rounded,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (groupCount == 0)
+                const Text(
+                  'Join or create a group to study with classmates.',
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                )
+              else
+                Text(
+                  groups.take(2).map((g) => g.name).join(', ') +
+                      (groupCount > 2 ? '  +${groupCount - 2} more' : ''),
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.groups_rounded, size: 18),
+                      label: const Text('View Groups'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                        side: const BorderSide(color: AppColors.primary),
+                        minimumSize: const Size.fromHeight(40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadii.button),
+                        ),
+                      ),
+                      onPressed: () => context.push('/study-groups'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

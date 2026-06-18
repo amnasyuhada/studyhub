@@ -20,6 +20,7 @@ import '../../features/quiz/screens/quiz_detail_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/resources/screens/resources_screen.dart';
 import '../../features/notes/screens/notes_list_screen.dart';
+import '../../features/study_groups/presentation/study_groups_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -157,6 +158,12 @@ final routerProvider = Provider<GoRouter>((ref) {
                 child: QuizDetailScreen(quiz: quiz),
               );
             },
+          ),
+          GoRoute(
+            path: '/study-groups',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: StudyGroupsScreen(),
+            ),
           ),
         ],
       ),
